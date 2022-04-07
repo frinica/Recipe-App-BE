@@ -1,0 +1,48 @@
+# Use root/example user/password credentials
+version: '3.1'
+
+services:
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+            testing_net:
+                ipv4_address: 172.28.1.2
+    ports:
+      - 8000:8000
+    volumes:
+      - ./project/:/var/www/html/
+
+  db: 
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+     # Funkar med sådan här typ av nätverksconfig i enkla fall. Men man vill nog titta in på namnbaserad för större CI/CD system /mvh Sebastian:
+     # https://medium.com/capital-one-tech/connect-to-a-mysql-docker-container-without-using-a-static-ip-address-2d76a7f933a3
+    networks:
+      testing_net:
+        ipv4_address: 172.28.1.1
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  adminer:
+    image: adminer
+    restart: always
+    networks:
+            testing_net:
+                ipv4_address: 172.28.1.3
+    ports:
+      - 8080:8080
+
+volumes: 
+  mysql-data:
+
+networks:
+    testing_net:
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.28.0.0/16
