@@ -10,7 +10,7 @@ class FavouritesList extends Model
     use HasFactory;
     protected $fillable = [
         'user_id',
-        'recipe_id'
+        'list_name'
     ];
 
 

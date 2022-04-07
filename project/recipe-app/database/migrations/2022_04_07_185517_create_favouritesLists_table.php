@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('favouritesLists', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id');
-            $table->integer('recipe_id');
+            $table->string('list_name');
             $table->timestamps();
         });
     }
