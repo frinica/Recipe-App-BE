@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CustomList;
+use App\Models\ListEntry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 

@@ -18,4 +18,9 @@ class CustomList extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function listentry()
+    {
+        return $this->hasMany(ListEntry::class);
+    } 
 }
