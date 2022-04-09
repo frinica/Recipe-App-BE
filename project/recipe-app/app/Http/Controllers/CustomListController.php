@@ -11,37 +11,30 @@ class CustomListController extends Controller
 {
     public function store(Request $request)
     {
-        $input = $request->all();
-        $request->validate([
-            'user_id' => 'required',
-            'list_name' => 'required' 
-        ]);
+        $list = new CustomList;
+        $list->list_name = $request->list_name;
+        $list->user_id = $request->user_id;
+        $list->save();
 
-        CustomList::create($input);
-        return back();
+        return response()->json([
+            "message" => "List has been created successfully"
+        ], 201);
     }
 
     public function getAll()
-    {
-        if(Auth::user())
-        {
-            $id = Auth::user()->id;
-            $lists = CustomList::where('user_id', $id)->get()->toJson(JSON_PRETTY_PRINT);
-            
-            return response($lists, 200); 
-        } else
-        {
-            return response()->json([
-                "message" => "Found no lists"
-            ], 404);
+    {   
+        $id = Auth::user()->id;
+        $lists = CustomList::where('user_id', $id)->get()->toJson(JSON_PRETTY_PRINT);
+             
+         return response($lists, 200); 
         }
-    }
+    
 
     public function getByID($id)
     {
         if(Auth::user())
         {
-            $list = CustomList::where('id', $id)->first();
+           /*  $list = CustomList::where('id', $id)->first(); */
             $recipes = ListEntry::select()->where('customlist_id', $id)->get();
 
             return response($recipes, 200);
@@ -54,33 +47,31 @@ class CustomListController extends Controller
     }
 
 
-
     public function update(Request $request, $id)
     {   
-        if(CustomList::where('id', $id)->exist())
-        {
             $list = CustomList::find($id);
-            $list->listName = is_null($request->listName) ? $list->listName : $request->listName;
-            $list->recipeID = is_null($request->recipeID) ? $list->recipeID : $request->recipeID;
+            $list->list_name = is_null($request->list_name) ? $list->list_name : $request->list_name;
             $list->save();
+
+            $listEntry = new ListEntry;
+            $listEntry->customlist_id = $id;
+            $listEntry->recipe_id = $request->recipe_id;
+            $listEntry->save();
 
             return response()->json([
                 "message" => "The list has been updated"], 200);
-            
-        } else 
-        {
-            return response()->json([
-                "message" => "List not found"
-            ], 404);
-        }
+        
     }
 
     public function destroy($id)
     {
-        if(Auth::user() && CustomList::where('id', $id)->exists())
+        if(CustomList::where('id', $id)->exists())
         {
             $list = CustomList::find($id);
             $list->delete();
+
+            $listEntry = ListEntry::where('customlist_id', $id);
+            $listEntry->delete();
 
             return response()->json([
                 "message" => "List deleted"
@@ -91,5 +82,5 @@ class CustomListController extends Controller
                 "message" => "List not found"
             ], 404);
         }
-    }
+    } 
 }

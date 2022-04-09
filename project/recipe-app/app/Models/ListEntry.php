@@ -9,7 +9,7 @@ class ListEntry extends Model
 {
     use HasFactory;
 
-    protected $table = 'listentries';
+    protected $table = 'list_entries';
     protected $fillable = [
         'customlist_id',
         'recipe_id'
