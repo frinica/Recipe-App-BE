@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('favouritesLists', function (Blueprint $table) {
+        Schema::create('customLists', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id');
             $table->string('list_name');
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('favouritesLists');
+        Schema::dropIfExists('customLists');
     }
 };
