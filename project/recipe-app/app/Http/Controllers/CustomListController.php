@@ -32,20 +32,19 @@ class CustomListController extends Controller
 
     public function getByID($id)
     {
-        if(Auth::user())
-        {
-           /*  $list = CustomList::where('id', $id)->first(); */
-            $recipes = ListEntry::select()->where('customlist_id', $id)->get();
+        if(CustomList::where('id', $id)->exists()) {
+            $list = CustomList::where('id', $id)->get();
+            /* return response($list, 200); */
 
-            return response($recipes, 200);
-        } else
-        {
+            $recipes = ListEntry::select()->where('customlist_id', $id)->get();
+            return response()->json([$list, $recipes], 200);
+        
+        } else {
             return response()->json([
                 "message" => "List not found"
             ], 404);
         }
     }
-
 
     public function update(Request $request, $id)
     {   

@@ -27,8 +27,11 @@ class AuthController extends Controller
             'user' => $user,
             'token' => $token
         ];
-
-        return response($response, 201);
+        
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'Bearer'
+        ]);
     }
 
     public function logout(Request $request)
@@ -49,9 +52,9 @@ class AuthController extends Controller
         $user = User::where('email', $fields['email'])->first();
         if(!$user || !Hash::check($fields['password'], $user->password)){
             return response([
-                "message" => "Incorrect credentials"], 404);
+                "message" => "Incorrect credentials"], 401);
         }
-        $token = $user->createToken('showapptoken')->plainTextToken;
+        $token = $user->createToken('showapptoken')->plainTextToken; 
 
         $response = [
             'user' => $user,
@@ -59,10 +62,11 @@ class AuthController extends Controller
         ];
 
         return response($response, 201);
+        
     }
 
-    public function userData(Request $request)
+    public function userData()
     {
-        return $request->user();
+        return auth()->user();
     }
 }
