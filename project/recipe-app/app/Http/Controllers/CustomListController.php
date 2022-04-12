@@ -34,7 +34,6 @@ class CustomListController extends Controller
     {
         if(CustomList::where('id', $id)->exists()) {
             $list = CustomList::where('id', $id)->get();
-            /* return response($list, 200); */
 
             $recipes = ListEntry::select()->where('customlist_id', $id)->get();
             return response()->json([$list, $recipes], 200);
@@ -48,19 +47,35 @@ class CustomListController extends Controller
 
     public function update(Request $request, $id)
     {   
-            $list = CustomList::find($id);
-            $list->list_name = is_null($request->list_name) ? $list->list_name : $request->list_name;
-            $list->save();
+        $list = CustomList::find($id);
+        $list->list_name = is_null($request->list_name) ? $list->list_name : $request->list_name;
+        $list->save();
 
-            $listEntry = new ListEntry;
-            $listEntry->customlist_id = $id;
-            $listEntry->recipe_id = $request->recipe_id;
-            $listEntry->save();
+        $listEntry = new ListEntry;
+        $listEntry->customlist_id = $id;
+        $listEntry->recipe_id = $request->recipe_id;
 
+        if(ListEntry::where('customlist_id', $request->customlist_id)->where('recipe_id', $request->recipe_id)->first())
+        {
             return response()->json([
-                "message" => "The list has been updated"], 200);
+                "message" => "This recipe is already in the list"
+            ],  403);
+        } else
+        {
+            $listEntry->save();
+            return response()->json([
+                "message" => "The list has been updated"
+            ], 200);
+        }
         
     }
+
+    public function deleteRecipe($id)
+    {
+        $data = ListEntry::find($id);
+        $data->delete();
+    }
+
 
     public function destroy($id)
     {

@@ -26,6 +26,7 @@ Route::group([
     Route::get('lists-view', [CustomListController::class, 'getAll']);
     Route::get('list-view/{id}', [CustomListController::class, 'getByID']);
     Route::put('update-list/{id}', [CustomListController::class, 'update']);
+    Route::delete('delete-recipe/{id}', [CustomListController::class, 'deleteRecipe']);
     Route::delete('delete-list/{id}', [CustomListController::class, 'destroy']);
 
 });
